@@ -188,19 +188,26 @@ tableextension 60100 EmployeeExt extends Employee
 
     }
 
-    internal procedure CalculateSalary(AtDate: Date) Salary: Record MonthlySalary
+    internal procedure CalculateSalary(ParametersProvider: Interface IParametersProvider) Result: Record CalculationResult
     var
         Calculate: Codeunit SalaryCalculate;
     begin
-        exit(Calculate.CalculateSalary(Rec, AtDate))
+        exit(Calculate.CalculateSalary(Rec, ParametersProvider))
     end;
 
     internal procedure PreviewSalary()
     var
+        Result: Record CalculationResult;
         TempMonthlySalary: Record MonthlySalary temporary;
+        MonthlySalaryWriter: Codeunit MonthlySalaryWriter;
     begin
-        TempMonthlySalary := Rec.CalculateSalary(WorkDate());
+        MonthlySalaryWriter.Initialize(Rec, Today(), false);
+        Result := Rec.CalculateSalary(TempMonthlySalary.GetParametersProvider());
+        Result.Write(MonthlySalaryWriter);
+
+        TempMonthlySalary := MonthlySalaryWriter.GetMonthlySalary();
         TempMonthlySalary.Insert();
+
         Page.RunModal(Page::MonthlySalaryPreview, TempMonthlySalary);
     end;
 

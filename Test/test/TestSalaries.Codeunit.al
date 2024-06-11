@@ -64,9 +64,9 @@ codeunit 60153 "Test - Salaries"
         Assert.AreEqual(Employee.Count(), MonthlySalary.Count(), 'Salary not calculated for every employee');
         if Employee.FindSet() then
             repeat
-                MonthlySalary.SetRange(Date, Today());
+                MonthlySalary.SetRange(Date, CalcDate('<CM>', Today()));
                 MonthlySalary.SetRange(EmployeeNo, Employee."No.");
-                Assert.IsTrue(MonthlySalary.IsEmpty(), StrSubstNo('Salary not calculated for employee %1', Employee."No."));
+                Assert.IsFalse(MonthlySalary.IsEmpty(), StrSubstNo('Salary not calculated for employee %1', Employee."No."));
             until Employee.Next() = 0;
     end;
 

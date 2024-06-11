@@ -4,40 +4,34 @@ using Microsoft.HumanResources.Employee;
 
 codeunit 60100 SalaryCalculate
 {
-    procedure CalculateSalary(var Employee: Record Employee; AtDate: Date) Result: Record MonthlySalary
+    procedure CalculateSalary(var Employee: Record Employee; ParametersProvider: Interface IParametersProvider) Result: Record CalculationResult
     var
-        Setup: Record SalarySetup;
-    begin
-        Setup.Get();
-        Result := CalculateSalary(Employee, Setup, AtDate);
-    end;
-
-    internal procedure CalculateSalary(var Employee: Record Employee; Setup: Record SalarySetup; AtDate: Date) Result: Record MonthlySalary
-    var
+        Parameters: Record CalculationParameters;
         BaseSalaryCalculator: Interface IBaseSalaryCalculator;
         SeniorityScheme: Interface ISeniorityScheme;
         BonusCalculator: Interface IBonusCalculator;
         IncentiveCalculator: Interface IIncentiveCalculator;
-        Salary: Decimal;
-        Bonus: Decimal;
-        Incentive: Decimal;
-        StartingDate: Date;
-        EndingDate: Date;
     begin
+        Parameters.Initialize(ParametersProvider);
+
         BaseSalaryCalculator := Employee.SalaryType;
         SeniorityScheme := Employee.Seniority;
         BonusCalculator := SeniorityScheme.GetBonusCalculator(Employee);
         IncentiveCalculator := SeniorityScheme.GetIncentiveCalculator(Employee);
 
-        StartingDate := CalcDate('<CM+1D-1M>', AtDate);
-        EndingDate := CalcDate('<CM>', AtDate);
+        Result := CalculateSalary(Employee, Parameters, BaseSalaryCalculator, BonusCalculator, IncentiveCalculator);
+    end;
 
-        Salary := BaseSalaryCalculator.CalculateBaseSalary(Employee, Setup);
-        Bonus := BonusCalculator.CalculateBonus(Employee, Setup, Salary, StartingDate, EndingDate, AtDate);
-        Incentive := IncentiveCalculator.CalculateIncentive(Employee, Setup, Salary, AtDate);
+    internal procedure CalculateSalary(var Employee: Record Employee; var Parameters: Record CalculationParameters; BaseSalaryCalculator: Interface IBaseSalaryCalculator; BonusCalculator: Interface IBonusCalculator; IncentiveCalculator: Interface IIncentiveCalculator) Result: Record CalculationResult
+    var
+        Salary: Decimal;
+        Bonus: Decimal;
+        Incentive: Decimal;
+    begin
+        Salary := BaseSalaryCalculator.CalculateBaseSalary(Employee, Parameters);
+        Bonus := BonusCalculator.CalculateBonus(Employee, Salary, Parameters);
+        Incentive := IncentiveCalculator.CalculateIncentive(Employee, Salary, Parameters);
 
-        Result.EmployeeNo := Employee."No.";
-        Result.Date := AtDate;
         Result.Salary := Salary;
         Result.Bonus := Bonus;
         Result.Incentive := Incentive;

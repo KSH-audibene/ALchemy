@@ -137,9 +137,10 @@ pageextension 60100 EmployeeCardExt extends "Employee Card"
 
                 trigger OnAction()
                 var
+                    Parameters: Record CalculationParameters;
                     TimetrackerProvider: Codeunit TimetrackerWorkHoursProvider;
                 begin
-                    TimetrackerProvider.CalculateHours(Rec, WorkDate(), WorkDate());
+                    TimetrackerProvider.CalculateHours(Rec, Parameters);
                     CurrPage.Update(false);
                 end;
             }

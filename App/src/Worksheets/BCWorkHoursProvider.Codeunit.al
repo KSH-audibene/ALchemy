@@ -5,14 +5,14 @@ using Microsoft.Projects.TimeSheet;
 
 codeunit 60109 BCWorkHoursProvider implements IWorkHoursProvider
 {
-    procedure CalculateHours(Employee: Record Employee; StartingDate: Date; EndingDate: Date) WorkHours: Decimal;
+    procedure CalculateHours(Employee: Record Employee; var Parameters: Record CalculationParameters) WorkHours: Decimal;
     var
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
     begin
         TimeSheetHeader.SetRange("Resource No.", Employee."Resource No.");
-        TimeSheetHeader.SetRange("Starting Date", StartingDate, EndingDate);
-        TimeSheetHeader.SetRange("Ending Date", StartingDate, EndingDate);
+        TimeSheetHeader.SetRange("Starting Date", Parameters.StartingDate, Parameters.EndingDate);
+        TimeSheetHeader.SetRange("Ending Date", Parameters.StartingDate, Parameters.EndingDate);
         if TimeSheetHeader.FindSet() then
             repeat
                 TimeSheetLine.Reset();

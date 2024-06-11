@@ -6,7 +6,7 @@ using Microsoft.Finance.GeneralLedger.Ledger;
 
 codeunit 60108 BonusCalculatorPerformance implements IBonusCalculator
 {
-    procedure CalculateBonus(Employee: Record Employee; Setup: Record SalarySetup; Salary: Decimal; StartingDate: Date; EndingDate: Date; AtDate: Date) Bonus: Decimal;
+    procedure CalculateBonus(Employee: Record Employee; Salary: Decimal; var Parameters: Record CalculationParameters) Bonus: Decimal;
     var
         GLAccount: Record "G/L Account";
         GLEntry: Record "G/L Entry";
@@ -14,14 +14,14 @@ codeunit 60108 BonusCalculatorPerformance implements IBonusCalculator
         Expense: Decimal;
         Profit: Decimal;
     begin
-        GLEntry.SetRange("Posting Date", StartingDate, EndingDate);
+        GLEntry.SetRange("Posting Date", Parameters.StartingDate, Parameters.EndingDate);
 
-        GLAccount.Get(Setup.IncomeAccountNo);
+        GLAccount.Get(Parameters.IncomeAccountNo);
         GLEntry.SetFilter("G/L Account No.", GLAccount.Totaling);
         GLEntry.CalcSums(Amount);
         Income := GLEntry.Amount;
 
-        GLAccount.Get(Setup.ExpenseAccountNo);
+        GLAccount.Get(Parameters.ExpenseAccountNo);
         GLEntry.SetFilter("G/L Account No.", GLAccount.Totaling);
         GLEntry.CalcSums(Amount);
         Expense := GLEntry.Amount;

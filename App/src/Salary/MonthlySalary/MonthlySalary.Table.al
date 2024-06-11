@@ -48,7 +48,7 @@ table 60101 MonthlySalary
     var
         AtDate: Date;
     begin
-        AtDate := CalcDate('<CM>', WorkDate());
+        AtDate := CalcDate('<CM>', Today());
         DeleteMonthlySalaries(AtDate);
         CalculateMonthlySalaries(AtDate);
     end;
@@ -64,13 +64,32 @@ table 60101 MonthlySalary
     internal procedure CalculateMonthlySalaries(AtDate: Date)
     var
         Employee: Record Employee;
-        MonthlySalary: Record MonthlySalary;
+        Result: Record CalculationResult;
+        MonthlySalaryWriter: Codeunit MonthlySalaryWriter;
     begin
         Employee.SetRange(Status, Employee.Status::Active);
         if Employee.FindSet() then
             repeat
-                MonthlySalary := Employee.CalculateSalary(AtDate);
-                MonthlySalary.Insert(false);
+                Result := Employee.CalculateSalary(GetParametersProvider());
+                MonthlySalaryWriter.Initialize(Employee, AtDate);
+                Result.Write(MonthlySalaryWriter);
             until Employee.Next() = 0;
+    end;
+
+    procedure GetParametersProvider(): Interface IParametersProvider
+    var
+        Setup: Record SalarySetup;
+        MonthlyParametersProvider: Codeunit MonthlyParametersProvider;
+    begin
+        Setup.Get();
+        MonthlyParametersProvider.Initialize(Setup, Today());
+        exit(MonthlyParametersProvider);
+    end;
+
+    procedure ToCalculationResult() Result: Record CalculationResult
+    begin
+        Result.Salary := Salary;
+        Result.Bonus := Bonus;
+        Result.Incentive := Incentive;
     end;
 }

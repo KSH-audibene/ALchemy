@@ -4,17 +4,17 @@ using Microsoft.HumanResources.Employee;
 
 codeunit 60118 DefaultBaseSalaryCalculator implements IBaseSalaryCalculator
 {
-    procedure CalculateBaseSalary(Employee: Record Employee; Setup: Record SalarySetup) Salary: Decimal;
+    procedure CalculateBaseSalary(Employee: Record Employee; var Parameters: Record CalculationParameters) Salary: Decimal;
     var
         Department: Record Department;
         DepartmentSenioritySetup: Record DepartmentSenioritySetup;
     begin
-        Setup.TestField(BaseSalary);
+        Parameters.TestField(BaseSalary);
 
         Salary := Employee.BaseSalary;
 
         if Employee.BaseSalary = 0 then begin
-            Salary := Setup.BaseSalary;
+            Salary := Parameters.BaseSalary;
             if Employee.DepartmentCode <> '' then begin
                 Department.Get(Employee.DepartmentCode);
                 Salary := Department.BaseSalary;

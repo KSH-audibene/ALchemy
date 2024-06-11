@@ -4,5 +4,5 @@ using Microsoft.HumanResources.Employee;
 
 interface IBaseSalaryCalculator
 {
-    procedure CalculateBaseSalary(Employee: Record Employee; Setup: Record SalarySetup): Decimal;
+    procedure CalculateBaseSalary(Employee: Record Employee; var Parameters: Record CalculationParameters): Decimal;
 }

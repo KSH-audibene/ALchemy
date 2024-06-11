@@ -6,13 +6,13 @@ using Microsoft.Finance.GeneralLedger.Journal;
 
 codeunit 60104 BonusCalculatorTarget implements IBonusCalculator
 {
-    procedure CalculateBonus(Employee: Record Employee; Setup: Record SalarySetup; Salary: Decimal; StartingDate: Date; EndingDate: Date; AtDate: Date) Bonus: Decimal;
+    procedure CalculateBonus(Employee: Record Employee; Salary: Decimal; var Parameters: Record CalculationParameters) Bonus: Decimal;
     var
         CustLedgEntry: Record "Cust. Ledger Entry";
     begin
         Employee.TestField("Salespers./Purch. Code");
 
-        CustLedgEntry.SetRange("Posting Date", StartingDate, EndingDate);
+        CustLedgEntry.SetRange("Posting Date", Parameters.StartingDate, Parameters.EndingDate);
         CustLedgEntry.SetRange("Salesperson Code", Employee."Salespers./Purch. Code");
         CustLedgEntry.SetFilter("Document Type", '%1|%2', "Gen. Journal Document Type"::Invoice, "Gen. Journal Document Type"::"Credit Memo");
         CustLedgEntry.CalcSums("Sales (LCY)");

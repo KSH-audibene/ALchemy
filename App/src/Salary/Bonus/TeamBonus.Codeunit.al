@@ -6,16 +6,16 @@ codeunit 60113 TeamBonus implements IBonusCalculator, IRewardsExtractor
 {
     Access = Internal;
 
-    procedure CalculateBonus(Employee: Record Employee; Setup: Record SalarySetup; Salary: Decimal; StartingDate: Date; EndingDate: Date; AtDate: Date) Bonus: Decimal;
+    procedure CalculateBonus(Employee: Record Employee; Salary: Decimal; var Parameters: Record CalculationParameters) Bonus: Decimal;
     var
         TeamController: Codeunit TeamController;
         this: Codeunit TeamBonus; // TODO BC25: This will become a built-in keyword; replace with it
     begin
-        Bonus := TeamController.CalculateSubordinates(Employee."No.", Employee.TeamBonusPct, AtDate, this);
+        Bonus := TeamController.CalculateSubordinates(Employee."No.", Employee.TeamBonusPct, Parameters.GetProvider(), this);
     end;
 
-    internal procedure ExtractRewardComponent(MonthlySalary: Record MonthlySalary): Decimal
+    internal procedure ExtractRewardComponent(Result: Record CalculationResult): Decimal
     begin
-        exit(MonthlySalary.Bonus);
+        exit(Result.Bonus);
     end;
 }

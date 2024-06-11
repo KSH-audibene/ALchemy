@@ -22,6 +22,9 @@ codeunit 60152 "Test - Salary"
         IsInitialized: Boolean;
         TimeSheetNos: Code[20];
 
+    var
+        ParametersFactory: Record MonthlySalary temporary;
+
     [Test]
     procedure Test_FixedSalary_Employee()
     var
@@ -29,7 +32,7 @@ codeunit 60152 "Test - Salary"
         Department: Record Department;
         Resource: Record Resource;
         Salesperson: Record "Salesperson/Purchaser";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - fixed salary defined on employee level
         Initialize();
@@ -61,7 +64,7 @@ codeunit 60152 "Test - Salary"
         Employee.Modify(false);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -75,7 +78,7 @@ codeunit 60152 "Test - Salary"
         Employee: Record Employee;
         Resource: Record Resource;
         Salesperson: Record "Salesperson/Purchaser";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
         Setup: Record SalarySetup;
     begin
         // [SCENARIO] Salary calculation - fixed salary not defined on employee level, default taken from setup, no incentive
@@ -104,7 +107,7 @@ codeunit 60152 "Test - Salary"
         Setup.Modify();
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(1500, Salary.Salary, 'Salary calculated incorrectly');
@@ -119,7 +122,7 @@ codeunit 60152 "Test - Salary"
         Department: Record Department;
         Resource: Record Resource;
         Salesperson: Record "Salesperson/Purchaser";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - fixed salary defined on department level
         Initialize();
@@ -151,7 +154,7 @@ codeunit 60152 "Test - Salary"
         Employee.Modify(false);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(1300, Salary.Salary, 'Salary calculated incorrectly');
@@ -167,7 +170,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - staff employee with timesheet salary calculation, undertime (negative bonus)
         Initialize();
@@ -194,7 +197,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 50);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -210,7 +213,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - staff employee with timesheet salary calculation, undertime but above minimum hours (no bonus)
         Initialize();
@@ -238,7 +241,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 20);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -254,7 +257,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - lead employee with timesheet salary calculation, overtime but below threshold (no bonus)
         Initialize();
@@ -283,7 +286,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 45);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -299,7 +302,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - lead employee with timesheet salary calculation, overtime above threshold (bonus)
         Initialize();
@@ -329,7 +332,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 46);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -345,7 +348,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - executive employee with timesheet salary calculation, overtime above threshold, no team (no bonus)
         Initialize();
@@ -375,7 +378,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 46);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -391,7 +394,7 @@ codeunit 60152 "Test - Salary"
         Salesperson, TeamMemberSalesperson, TeamMemberSalesperson2 : Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - director employee with timesheet salary calculation, team with bonus (bonus, no incentive)
         Initialize();
@@ -465,7 +468,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 28);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -481,7 +484,7 @@ codeunit 60152 "Test - Salary"
         Salesperson, TeamMemberSalesperson, TeamMemberSalesperson2 : Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - manager employee with timesheet salary calculation, team with bonus (bonus, incentive)
         Initialize();
@@ -555,7 +558,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 28);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -571,7 +574,7 @@ codeunit 60152 "Test - Salary"
         Salesperson: Record "Salesperson/Purchaser";
         TimeSheetHeader: Record "Time Sheet Header";
         TimeSheetLine: Record "Time Sheet Line";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation - trainee that otherwise meets bonus and incentive criteria - no bonus or incentive calculated
         Initialize();
@@ -601,7 +604,7 @@ codeunit 60152 "Test - Salary"
         CreateTimeSheetLine(TimeSheetHeader, TimeSheetLine, 46);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -616,7 +619,7 @@ codeunit 60152 "Test - Salary"
         Resource: Record Resource;
         Salesperson: Record "Salesperson/Purchaser";
         CustLedgEntry: Record "Cust. Ledger Entry";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation
         Initialize();
@@ -652,7 +655,7 @@ codeunit 60152 "Test - Salary"
         CustLedgEntry.Insert(false);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');
@@ -667,7 +670,7 @@ codeunit 60152 "Test - Salary"
         Resource: Record Resource;
         Salesperson: Record "Salesperson/Purchaser";
         CustLedgEntry: Record "Cust. Ledger Entry";
-        Salary: Record MonthlySalary;
+        Salary: Record CalculationResult;
     begin
         // [SCENARIO] Salary calculation
         Initialize();
@@ -705,7 +708,7 @@ codeunit 60152 "Test - Salary"
         CustLedgEntry.Insert(false);
 
         // [WHEN] Calculating Salary
-        Salary := Employee.CalculateSalary(Today);
+        Salary := Employee.CalculateSalary(ParametersFactory.GetParametersProvider());
 
         // [THEN] Salary must not be adjusted from base salary
         Assert.AreEqual(2000, Salary.Salary, 'Salary calculated incorrectly');

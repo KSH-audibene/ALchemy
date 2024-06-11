@@ -1,10 +1,8 @@
 namespace ALchemy;
 
-using Microsoft.HumanResources.Employee;
-
 interface IRewardsExtractor
 {
     Access = Internal;
 
-    procedure ExtractRewardComponent(MonthlySalary: Record MonthlySalary): Decimal;
+    procedure ExtractRewardComponent(Result: Record CalculationResult): Decimal;
 }

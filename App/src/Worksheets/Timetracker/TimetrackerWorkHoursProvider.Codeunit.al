@@ -4,7 +4,7 @@ using Microsoft.HumanResources.Employee;
 
 codeunit 60110 TimetrackerWorkHoursProvider implements IWorkHoursProvider
 {
-    procedure CalculateHours(Employee: Record Employee; StartingDate: Date; EndingDate: Date): Decimal;
+    procedure CalculateHours(Employee: Record Employee; var Parameters: Record CalculationParameters): Decimal;
     var
         Ticket: Text;
         TicketResult: JsonArray;
