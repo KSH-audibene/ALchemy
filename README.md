@@ -24,7 +24,7 @@ This workshop contains six branches:
 
 * **main**: The main branch of this repository, contains the base case study code example and these instructions. You use this branch as your starting point.
 * **01-SRP**: Starting point for "Exercise 1: SRP Improvements".
-* **02-OCP**: Starting point for "Exercise 2: DIP Improvements". Contains the solution code for exercise 1.
+* **02-OCP**: Starting point for "Exercise 2: OCP Improvements". Contains the solution code for exercise 1.
 * **03-LSP**: Starting point for "Exercise 3: LSP Improvements". Contains the solution code for exercise 2.
 * **04-ISP**: Starting point for "Exercise 4: ISP Improvements". Contains the solution code for exercise 3.
 * **05-DIP**: Starting point for "Exercise 5: DIP Improvements". Contains the solution code for exercise 4.
